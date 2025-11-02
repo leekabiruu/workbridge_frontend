@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "/api", 
 });
 
 
@@ -26,7 +26,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.code === 'ERR_NETWORK' || error.code === 'ECONNREFUSED') {
+    if (error.code === "ERR_NETWORK" || error.code === "ECONNREFUSED") {
       console.warn("Backend server not running. Please start the backend.");
       return Promise.resolve({ data: { message: "Backend offline" } });
     }

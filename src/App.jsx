@@ -15,7 +15,7 @@ import Contact from "./pages/Contact";
 import TermsOfService from "./pages/Terms";
 import PrivacyPolicy from "./pages/Policy";
 
-// Protected Route Component
+
 function ProtectedRoute({ children, roles }) {
   const { user } = useAuth();
 
@@ -31,7 +31,7 @@ export default function App() {
       <AuthProvider>
         <Navbar />
         <Routes>
-          {/* Public Routes */}
+          
           <Route path="/landing" element={<LandingPage />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
@@ -40,7 +40,6 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
 
-          {/* Protected Routes */}
           <Route
             path="/"
             element={
@@ -82,7 +81,7 @@ export default function App() {
             }
           />
 
-          {/* Catch-all redirect */}
+
           <Route path="*" element={<Navigate to="/landing" replace />} />
         </Routes>
         <Footer />

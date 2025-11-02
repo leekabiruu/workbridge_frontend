@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Persist user in localStorage whenever it changes
+
   useEffect(() => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
