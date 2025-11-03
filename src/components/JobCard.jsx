@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
 import '../index.css';
 
-export default function JobCard({ job, showActions = true, onApply, onFavorite, actionMessage }) {
+export default function JobCard({ job, showActions = true, onApply, onRemoveApplication, actionMessage }) {
   const [applied, setApplied] = useState(job.is_applied || false);
-  const [favorited, setFavorited] = useState(job.is_favorited || false);
-
 
   useEffect(() => {
     setApplied(job.is_applied || false);
-    setFavorited(job.is_favorited || false);
-  }, [job.is_applied, job.is_favorited]);
+  }, [job.is_applied]);
 
   const handleApply = async () => {
     if (!onApply) return;
@@ -17,37 +14,40 @@ export default function JobCard({ job, showActions = true, onApply, onFavorite, 
     if (result?.success) setApplied(true);
   };
 
-  const handleFavorite = async () => {
-    if (!onFavorite) return;
-    const result = await onFavorite();
-    if (result?.success) setFavorited(!favorited);
+  const handleRemoveApplication = async () => {
+    if (!onRemoveApplication) return;
+    const result = await onRemoveApplication();
+    if (result?.success) setApplied(false);
   };
 
   return (
-    <div className="border p-4 rounded-md shadow-sm bg-white">
-      <h3 className="font-bold text-lg">{job.title}</h3>
-      <p className="text-gray-600">{job.location}</p>
-      <p className="text-gray-600">{job.job_type} | {job.salary_range}</p>
-      <p className="text-gray-500 text-sm">Posted by: {job.employer_name}</p>
-      <p className="text-gray-500 text-sm">{new Date(job.created_at).toLocaleDateString()}</p>
-      <p className="mt-2 text-gray-700">{job.description?.substring(0, 100)}...</p>
+    <div className="border p-4 rounded-md shadow-sm bg-white flex flex-col h-full">
+      <div className="flex-grow">
+        <h3 className="font-bold text-lg">{job.title}</h3>
+        <p className="text-gray-600">{job.location}</p>
+        <p className="text-gray-600">{job.job_type} | {job.salary_range}</p>
+        <p className="text-gray-500 text-sm">Posted by: {job.employer_name}</p>
+        <p className="text-gray-500 text-sm">{new Date(job.created_at).toLocaleDateString()}</p>
+        <p className="mt-2 text-gray-700">{job.description?.substring(0, 100)}...</p>
+      </div>
 
       {showActions && (
-        <div className="mt-3 flex gap-2">
-          <button
-            disabled={applied}
-            className={`px-3 py-1 rounded text-white ${applied ? "bg-gray-400 cursor-not-allowed" : "bg-green-500"}`}
-            onClick={handleApply}
-          >
-            {applied ? "Applied" : "Apply"}
-          </button>
-
-          <button
-            className={`px-3 py-1 rounded text-white ${favorited ? "bg-red-500" : "bg-yellow-500"}`}
-            onClick={handleFavorite}
-          >
-            {favorited ? "Unfavorite" : "Favorite"}
-          </button>
+        <div className="mt-4 flex gap-2">
+          {!applied ? (
+            <button
+              className="px-3 py-2 rounded text-white flex-1 bg-green-500 hover:bg-green-600"
+              onClick={handleApply}
+            >
+              Apply
+            </button>
+          ) : (
+            <button
+              className="px-3 py-2 rounded text-white flex-1 bg-red-500 hover:bg-red-600"
+              onClick={handleRemoveApplication}
+            >
+              Remove Application
+            </button>
+          )}
         </div>
       )}
 

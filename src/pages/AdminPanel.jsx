@@ -11,7 +11,7 @@ export default function AdminPanel() {
   const [loadingJobs, setLoadingJobs] = useState(true);
   const [error, setError] = useState("");
 
-  // Fetch all users
+  
   useEffect(() => {
     if (!user || user.role !== "admin") return;
 

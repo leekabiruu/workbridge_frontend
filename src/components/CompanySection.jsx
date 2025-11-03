@@ -3,10 +3,10 @@ import '../index.css';
 
 function CompanySection() {
   const companies = [
-    { name: 'Google', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg' },
-    { name: 'Microsoft', logo: 'https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg' },
-    { name: 'Figma', logo: 'https://upload.wikimedia.org/wikipedia/commons/3/33/Figma-logo.svg' },
-    { name: 'Amazon', logo: 'https://upload.wikimedia.org/wikipedia/commons/a/a9/Amazon_logo.svg' },
+    { name: 'Google', logo: 'https://logo.clearbit.com/google.com' },
+    { name: 'Microsoft', logo: 'https://logo.clearbit.com/microsoft.com' },
+    { name: 'Figma', logo: 'https://logo.clearbit.com/figma.com' },
+    { name: 'Amazon', logo: 'https://logo.clearbit.com/amazon.com' },
   ]
 
   return (

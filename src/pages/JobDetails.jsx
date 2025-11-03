@@ -5,7 +5,7 @@ import api from "../services/api";
 import '../index.css';
 
 export default function JobDetails() {
-  const { id } = useParams(); // job ID from URL
+  const { id } = useParams(); 
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -13,7 +13,6 @@ export default function JobDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [applied, setApplied] = useState(false);
-  const [favorited, setFavorited] = useState(false);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -23,7 +22,6 @@ export default function JobDetails() {
         const res = await api.get(`/jobs/${id}`);
         setJob(res.data);
         setApplied(res.data.is_applied || false);
-        setFavorited(res.data.is_favorited || false);
       } catch (err) {
         console.error(err);
         setError("Failed to load job details.");
@@ -35,40 +33,17 @@ export default function JobDetails() {
   }, [id]);
 
   const handleApply = async () => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-    try {
-      const res = await api.post(`/jobseekers/jobs/${id}/apply`, { job_seeker_id: user.id });
-      if (res.status === 200) {
-        setApplied(true);
-        setMessage("Application submitted!");
-      }
-    } catch (err) {
-      console.error(err);
-      setMessage(err.response?.data?.msg || "Failed to apply");
+    const res = await api.post(`/applications`, { job_id: parseInt(id) });
+    setApplied(true);
+    if (res.status === 201) {
+      setMessage("Application submitted!");
+    } else {
+      setMessage("You have already applied for this job");
     }
     setTimeout(() => setMessage(""), 3000);
   };
 
-  const handleFavorite = async () => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-    try {
-      const res = await api.post(`/jobseekers/favorites/${id}`, { user_id: user.id });
-      if (res.status === 200) {
-        setFavorited(!favorited);
-        setMessage(favorited ? "Removed from favorites" : "Added to favorites");
-      }
-    } catch (err) {
-      console.error(err);
-      setMessage(err.response?.data?.msg || "Failed to update favorite");
-    }
-    setTimeout(() => setMessage(""), 3000);
-  };
+
 
   if (loading) return <p className="text-center mt-10">Loading job details...</p>;
   if (error) return <p className="text-red-500 text-center mt-10">{error}</p>;
@@ -81,24 +56,15 @@ export default function JobDetails() {
       <p className="text-gray-500 text-sm mb-4">Posted by: {job.employer_name} on {new Date(job.created_at).toLocaleDateString()}</p>
       <p className="text-gray-700 whitespace-pre-line mb-6">{job.description}</p>
 
-      {user && (
-        <div className="flex gap-4">
-          <button
-            disabled={applied}
-            className={`px-4 py-2 rounded text-white ${applied ? "bg-gray-400 cursor-not-allowed" : "bg-green-500 hover:bg-green-600"}`}
-            onClick={handleApply}
-          >
-            {applied ? "Applied" : "Apply"}
-          </button>
-
-          <button
-            className={`px-4 py-2 rounded text-white ${favorited ? "bg-red-500 hover:bg-red-600" : "bg-yellow-500 hover:bg-yellow-600"}`}
-            onClick={handleFavorite}
-          >
-            {favorited ? "Unfavorite" : "Favorite"}
-          </button>
-        </div>
-      )}
+      <div className="flex gap-4">
+        <button
+          disabled={applied}
+          className={`px-4 py-2 rounded text-white ${applied ? "bg-gray-400 cursor-not-allowed" : "bg-green-500 hover:bg-green-600"}`}
+          onClick={handleApply}
+        >
+          {applied ? "Applied" : "Apply"}
+        </button>
+      </div>
 
       {message && <p className="mt-4 text-blue-600">{message}</p>}
     </div>

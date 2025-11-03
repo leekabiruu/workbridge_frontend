@@ -3,7 +3,7 @@ import '../index.css';
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-300 py-6 mt-12">
+    <footer className="bg-white border-t text-gray-600 py-6 mt-12">
       <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
         <p>© {new Date().getFullYear()} WorkBridge. All rights reserved.</p>
 

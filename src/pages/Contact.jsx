@@ -35,12 +35,19 @@ const Contact = () => {
     setStatus({ message: "", type: "" });
 
     try {
-
+      
+      const submittedData = { ...formData };
+      
       setStatus({
-        message: "✅ Your message has been sent. We'll get back to you soon!",
+        message: "Your message has been sent. We'll get back to you soon!",
         type: "success",
+        submittedData
       });
-      setFormData({ name: "", email: "", message: "" });
+      
+      
+      setTimeout(() => {
+        setFormData({ name: "", email: "", message: "" });
+      }, 100);
     } catch (error) {
       setStatus({
         message: "❌ Something went wrong. Please try again later.",
@@ -128,13 +135,36 @@ const Contact = () => {
           </form>
 
           {status.message && (
-            <p
-              className={`mt-4 text-center font-medium ${
-                status.type === "success" ? "text-teal-600" : "text-red-600"
-              }`}
-            >
-              {status.message}
-            </p>
+            <div className={`mt-6 p-4 rounded-lg border ${
+              status.type === "success" 
+                ? "bg-green-50 border-green-200 text-green-800" 
+                : "bg-red-50 border-red-200 text-red-800"
+            }`}>
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  {status.type === "success" ? "✅" : "❌"}
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium">
+                    {status.type === "success" ? "Message Sent Successfully!" : "Error Sending Message"}
+                  </h3>
+                  <p className="text-sm mt-1">{status.message}</p>
+                  {status.type === "success" && (
+                    <div className="mt-3 p-3 bg-white rounded border">
+                      <h4 className="font-medium text-gray-900">Your Message:</h4>
+                      <p className="text-sm text-gray-600 mt-1">
+                        <strong>Name:</strong> {status.submittedData?.name || "[Submitted]"}<br/>
+                        <strong>Email:</strong> {status.submittedData?.email || "[Submitted]"}<br/>
+                        <strong>Message:</strong> {status.submittedData?.message || "[Submitted]"}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-2">
+                        We'll respond within 24 hours to your email address.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </section>
@@ -143,7 +173,7 @@ const Contact = () => {
         <h2 className="text-xl font-semibold mb-3 text-teal-700">Follow Us</h2>
         <div className="flex justify-center space-x-6">
           <a
-            href="https://www.facebook.com/WorkBridge"
+            href="https://facebook.com"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Facebook"
@@ -152,7 +182,7 @@ const Contact = () => {
             <FaFacebook size={26} />
           </a>
           <a
-            href="https://www.instagram.com/WorkBridge"
+            href="https://instagram.com"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Instagram"
@@ -161,7 +191,7 @@ const Contact = () => {
             <FaInstagram size={26} />
           </a>
           <a
-            href="https://www.linkedin.com/company/WorkBridge"
+            href="https://linkedin.com"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="LinkedIn"

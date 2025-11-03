@@ -22,12 +22,12 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const nameRef = useRef(null);
 
-  // Focus full name input on mount
+  
   useEffect(() => {
     nameRef.current?.focus();
   }, []);
 
-  // Persist role in localStorage
+  
   useEffect(() => {
     localStorage.setItem("lastRole", role);
   }, [role]);
@@ -64,9 +64,9 @@ export default function Signup() {
         return;
       }
 
-      // Redirect after successful signup
+      
       if (role === "job_seeker") navigate("/dashboard");
-      else if (role === "employer") navigate("/dashboard");
+      else if (role === "employer") navigate("/employer-dashboard");
     } catch (err) {
       console.error(err);
       setError("Network error, please try again.");

@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
+import EmployerDashboard from "./pages/EmployerDashboard";
 import Jobs from "./pages/Jobs";
 import JobDetails from "./pages/JobDetails";
 import AdminPanel from "./pages/AdminPanel";
@@ -15,7 +16,7 @@ import Contact from "./pages/Contact";
 import TermsOfService from "./pages/Terms";
 import PrivacyPolicy from "./pages/Policy";
 
-// Protected Route Component
+
 function ProtectedRoute({ children, roles }) {
   const { user } = useAuth();
 
@@ -52,8 +53,16 @@ export default function App() {
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute roles={["job_seeker", "employer"]}>
+              <ProtectedRoute roles={["job_seeker"]}>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/employer-dashboard"
+            element={
+              <ProtectedRoute roles={["employer"]}>
+                <EmployerDashboard />
               </ProtectedRoute>
             }
           />

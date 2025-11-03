@@ -21,7 +21,7 @@ const About = () => {
       <section className="max-w-6xl w-full bg-white rounded-2xl shadow-md p-8 md:p-12 flex flex-col md:flex-row gap-10 items-center mb-16">
         <div className="md:w-1/2">
           <img
-            src="https://media.istockphoto.com/id/1418476287/photo/businessman-analyzing-companys-financial-balance-sheet-working-with-digital-augmented-reality.jpg?s=1024x1024&w=is&k=20&c=5XJmAncylGHolXBNv72I92Cttvaq7eGhpckgjHz34V4="
+            src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=500"
             alt="Team collaboration and analytics"
             className="rounded-xl shadow-lg w-full object-cover"
           />

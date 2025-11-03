@@ -51,14 +51,14 @@ export default function Login() {
       const res = await login(form.email, form.password, role);
 
       if (!res.success) {
-        // Show backend error if provided
+        
         setError(res.message || "Login failed, please try again.");
         return;
       }
 
-      // Redirect based on role
+      
       if (role === "job_seeker") navigate("/dashboard");
-      else if (role === "employer") navigate("/dashboard");
+      else if (role === "employer") navigate("/employer-dashboard");
     } catch (err) {
       console.error(err);
       setError("Network error, please try again.");

@@ -18,11 +18,17 @@ function LandingPage() {
         setLoading(true);
         const res = await api.get("/jobs?limit=5");
 
-        // Support both backend response formats: { jobs: [...] } or [...]
-        const jobs = res.data?.jobs ?? res.data ?? [];
-        if (!Array.isArray(jobs)) throw new Error("Invalid jobs format");
-
-        setFeaturedJobs(jobs);
+        const data = res.data;
+        if (data && typeof data === 'object' && !data.message) {
+          const jobs = data.jobs || (Array.isArray(data) ? data : []);
+          if (Array.isArray(jobs)) {
+            setFeaturedJobs(jobs);
+          } else {
+            setError("Invalid jobs format");
+          }
+        } else {
+          setError(data?.message || "Failed to load featured jobs.");
+        }
       } catch (err) {
         console.error(err);
         setError("Failed to load featured jobs.");

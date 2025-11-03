@@ -8,8 +8,7 @@ const testimonials = [
     role: "Software Engineer at Microsoft",
     quote:
       "WorkBridge made my job search effortless! I found my dream job within two weeks.",
-    image:
-      "https://randomuser.me/api/portraits/women/44.jpg",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150",
   },
   {
     id: 2,
@@ -17,8 +16,7 @@ const testimonials = [
     role: "HR Manager at Google",
     quote:
       "An amazing platform! Posting jobs and finding the right talent has never been easier.",
-    image:
-      "https://randomuser.me/api/portraits/men/32.jpg",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150",
   },
   {
     id: 3,
@@ -26,8 +24,7 @@ const testimonials = [
     role: "Product Designer at Safaricom",
     quote:
       "The user experience is top-notch. I love how simple and fast it is to connect with employers.",
-    image:
-      "https://randomuser.me/api/portraits/women/68.jpg",
+    image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150",
   },
 ];
 

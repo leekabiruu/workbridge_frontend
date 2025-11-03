@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
 
   const [loading, setLoading] = useState(false);
 
-  // ✅ Persist user
+  
   useEffect(() => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user]);
 
-  // ✅ Attach token to axios requests
+  
   useEffect(() => {
     const requestInterceptor = api.interceptors.request.use(
       (config) => {
@@ -40,12 +40,12 @@ export const AuthProvider = ({ children }) => {
     };
   }, [user]);
 
-  // ✅ Login
+  
   const login = async (emailOrUsername, password, role) => {
     setLoading(true);
     try {
       const res = await api.post("/auth/login", {
-        username: emailOrUsername,
+        email: emailOrUsername,
         password,
         role,
       });
@@ -54,12 +54,11 @@ export const AuthProvider = ({ children }) => {
 
       setUser({
         ...data.user,
-        access: data.access_token, // ✅ token key matches backend
+        access: data.access_token,
         refresh: data.refresh_token,
       });
 
       setLoading(false);
-      navigate("/"); // ✅ redirect after login
       return { success: true };
 
     } catch (err) {
@@ -71,7 +70,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ✅ Signup (auto-login)
+  
   const signup = async (form) => {
     setLoading(true);
     try {
@@ -91,7 +90,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ✅ Logout
+  
   const logout = () => {
     setUser(null);
     navigate("/login");
@@ -104,5 +103,5 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// ✅ Custom hook
+
 export const useAuth = () => useContext(AuthContext);

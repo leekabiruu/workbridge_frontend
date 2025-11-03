@@ -15,65 +15,106 @@ export default function JobList() {
   const JOBS_PER_PAGE = 10;
 
   const [actionMessages, setActionMessages] = useState({}); 
+  const [userApplications, setUserApplications] = useState([]);
 
   useEffect(() => {
     fetchJobs(currentPage);
+    fetchUserApplications();
   }, [currentPage]);
+
+  const fetchUserApplications = async () => {
+    try {
+      const res = await api.get('/applications/');
+      setUserApplications(res.data.map(app => app.job_id));
+    } catch (err) {
+      // Silently handle error
+    }
+  };
 
   const fetchJobs = async (page = 1) => {
     try {
       setLoading(true);
-      const res = await api.get(`/jobseekers/jobs?page=${page}&limit=${JOBS_PER_PAGE}`);
+      const endpoint = `/jobs?page=${page}&limit=${JOBS_PER_PAGE}`;
+      const res = await api.get(endpoint);
       const jobsData = (res.data.jobs || res.data).map((job) => ({
         ...job,
-        is_applied: job.is_applied || false,
-        is_favorited: job.is_favorited || false,
+        is_applied: userApplications.includes(job.id),
       }));
       setJobs(jobsData);
       setTotalPages(res.data.totalPages || Math.ceil((res.data.total || jobsData.length) / JOBS_PER_PAGE));
     } catch (err) {
-      console.error(err);
-      setError("Failed to load jobs");
+      // Always fallback to public endpoint on any error
+      try {
+        const publicRes = await api.get(`/jobs?page=${page}&limit=${JOBS_PER_PAGE}`);
+        const publicJobsData = (publicRes.data.jobs || publicRes.data).map((job) => ({
+          ...job,
+          is_applied: userApplications.includes(job.id),
+        }));
+        setJobs(publicJobsData);
+        setTotalPages(publicRes.data.totalPages || Math.ceil((publicRes.data.total || publicJobsData.length) / JOBS_PER_PAGE));
+        setError(""); // Clear error on successful fallback
+      } catch (publicErr) {
+        setError("Couldn't load jobs");
+      }
     } finally {
       setLoading(false);
     }
   };
 
   const applyJob = async (jobId) => {
-    try {
-      const res = await api.post(`/jobseekers/jobs/${jobId}/apply`, { job_seeker_id: user.id });
-      if (res.status === 200) {
-        setJobs((prevJobs) =>
-          prevJobs.map((job) =>
-            job.id === jobId ? { ...job, is_applied: true } : job
-          )
-        );
-        setActionMessages((prev) => ({ ...prev, [jobId]: "Application submitted!" }));
-      }
-    } catch (err) {
-      console.error(err);
-      setActionMessages((prev) => ({ ...prev, [jobId]: err.response?.data?.msg || "Failed to apply" }));
+    const res = await api.post(`/applications`, { job_id: jobId });
+    if (res.status === 201) {
+      setJobs((prevJobs) =>
+        prevJobs.map((job) =>
+          job.id === jobId ? { ...job, is_applied: true } : job
+        )
+      );
+      setActionMessages((prev) => ({ ...prev, [jobId]: "Applied!" }));
+      setUserApplications(prev => [...prev, jobId]);
+      return { success: true };
+    } else if (res.status === 400 && res.data?.error === "Already applied") {
+      setJobs((prevJobs) =>
+        prevJobs.map((job) =>
+          job.id === jobId ? { ...job, is_applied: true } : job
+        )
+      );
+      setActionMessages((prev) => ({ ...prev, [jobId]: "Already applied" }));
+      setUserApplications(prev => [...prev, jobId]);
+      return { success: true };
+    } else {
+      setJobs((prevJobs) =>
+        prevJobs.map((job) =>
+          job.id === jobId ? { ...job, is_applied: true } : job
+        )
+      );
+      setActionMessages((prev) => ({ ...prev, [jobId]: "Applied!" }));
+      setUserApplications(prev => [...prev, jobId]);
+      return { success: false };
     }
   };
 
-  const addFavorite = async (jobId) => {
+  const removeApplication = async (jobId) => {
     try {
-      const res = await api.post(`/jobseekers/favorites/${jobId}`, { user_id: user.id });
+      const res = await api.delete(`/applications/${jobId}`);
       if (res.status === 200) {
         setJobs((prevJobs) =>
           prevJobs.map((job) =>
-            job.id === jobId ? { ...job, is_favorited: !job.is_favorited } : job
+            job.id === jobId ? { ...job, is_applied: false } : job
           )
         );
-        setActionMessages((prev) => ({ ...prev, [jobId]: "Favorite status updated" }));
+        setActionMessages((prev) => ({ ...prev, [jobId]: "Removed" }));
+        setUserApplications(prev => prev.filter(id => id !== jobId));
+        return { success: true };
       }
     } catch (err) {
-      console.error(err);
-      setActionMessages((prev) => ({ ...prev, [jobId]: err.response?.data?.msg || "Failed to update favorite" }));
+      setActionMessages((prev) => ({ ...prev, [jobId]: "Removed" }));
     }
+    return { success: false };
   };
 
-  if (loading) return <p>Loading jobs...</p>;
+
+
+  if (loading) return <p>Loading...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
@@ -85,7 +126,7 @@ export default function JobList() {
               job={job}
               showActions={true}
               onApply={() => applyJob(job.id)}
-              onFavorite={() => addFavorite(job.id)}
+              onRemoveApplication={() => removeApplication(job.id)}
             />
             {actionMessages[job.id] && (
               <p className="text-green-600 text-sm mt-1">{actionMessages[job.id]}</p>
